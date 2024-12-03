@@ -1,6 +1,6 @@
-package com.example.demo;
+package com.example.demo.web;
 
-import com.example.demo.web.MarsWeatherDto;
+import com.example.demo.domain.MarsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MarsController {
 
-    private final NasaClient nasaClient;
+    private final MarsService marsService;
 
     @GetMapping("/getWeather")
     MarsWeatherDto getWeather(){
-        return nasaClient.getWeather();
+        return marsService.getWeather();
     }
 }
