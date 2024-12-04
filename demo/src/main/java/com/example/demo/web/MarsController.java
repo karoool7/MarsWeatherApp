@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class MarsController {
@@ -12,7 +14,7 @@ public class MarsController {
     private final MarsService marsService;
 
     @GetMapping("/getWeather")
-    MarsWeatherDto getWeather(){
+    List<MarsWeatherDetailsDto> getWeather(){
         return marsService.getWeather();
     }
 }
