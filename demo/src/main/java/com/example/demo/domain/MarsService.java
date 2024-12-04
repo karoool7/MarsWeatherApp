@@ -1,23 +1,36 @@
 package com.example.demo.domain;
 
+import com.example.demo.model.MarsDailyWeather;
 import com.example.demo.repo.MarsRepo;
 import com.example.demo.web.MarsWeatherDetailsDto;
 import com.example.demo.web.MarsWeatherDto;
 import com.example.demo.web.NasaClient;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MarsService {
 
     private final NasaClient nasaClient;
+    private final MarsMapper marsMapper;
+    private final MarsRepo marsRepo;
 
-    public MarsWeatherDto getWeather() {
-        return nasaClient.getWeather();
+    public List<MarsWeatherDetailsDto> getWeather() {
+        Optional<List<MarsWeatherDetailsDto>> validSoles = getValidSolesIfPresent(nasaClient.getWeather());
+        validSoles.ifPresent(soles -> {
+            List<MarsDailyWeather> entities = soles.stream()
+                    .map(marsMapper::toEntityFromDto)
+                    .toList();
+            marsRepo.saveAll(entities);
+        });
+        log.info("Lista obiektów w bazie danych: {}", marsRepo.count());
+        return marsMapper.toDtoListFromEntity(marsRepo.findAll());
     }
 
     private Optional<List<MarsWeatherDetailsDto>> getValidSolesIfPresent(MarsWeatherDto marsWeatherDto) {
