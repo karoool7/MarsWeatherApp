@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Getter
 @Entity
 @AllArgsConstructor
@@ -31,4 +33,17 @@ public class MarsDailyWeather {
     private String localUvIrradianceIndex;
     private String minGtsTemp;
     private String maxGtsTemp;
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        MarsDailyWeather that = (MarsDailyWeather) object;
+        return Objects.equals(terrestrialDate, that.terrestrialDate) && Objects.equals(sol, that.sol) && Objects.equals(ls, that.ls) && Objects.equals(season, that.season) && Objects.equals(minTemp, that.minTemp) && Objects.equals(maxTemp, that.maxTemp) && Objects.equals(pressure, that.pressure) && Objects.equals(pressureString, that.pressureString) && Objects.equals(atmoOpacity, that.atmoOpacity) && Objects.equals(sunrise, that.sunrise) && Objects.equals(sunset, that.sunset) && Objects.equals(localUvIrradianceIndex, that.localUvIrradianceIndex) && Objects.equals(minGtsTemp, that.minGtsTemp) && Objects.equals(maxGtsTemp, that.maxGtsTemp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(terrestrialDate, sol, ls, season, minTemp, maxTemp, pressure, pressureString, atmoOpacity, sunrise, sunset, localUvIrradianceIndex, minGtsTemp, maxGtsTemp);
+    }
 }
