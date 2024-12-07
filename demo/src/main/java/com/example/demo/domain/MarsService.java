@@ -91,8 +91,13 @@ public class MarsService {
                 .map(marsMapper::toEntityFromDto)
                 .filter(solToCheck -> isUniqueRecord(solToCheck, entitiesFromDb))
                 .toList();
-        marsRepo.saveAll(entities);
+        saveAllWeatherRecords(entities);
         saveSyncInfo();
+    }
+
+    private void saveAllWeatherRecords(List<MarsDailyWeather> entities) {
+        marsRepo.saveAll(entities);
+        log.info("Zapisano {} rekordów do bazy", entities.size());
     }
 
     private void saveSyncInfo() {
@@ -120,5 +125,9 @@ public class MarsService {
         marsRepo.deleteAll(recordsToRemove);
         log.info("Liczba rekordów w bazie, po skasowaniu {}", marsRepo.count());
         return recordsToRemove;
+    }
+
+    public void synchronizeData(){
+        synchronizeMarsWeatherData();
     }
 }
