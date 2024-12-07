@@ -113,4 +113,12 @@ public class MarsService {
             return null;
         }
     }
+
+    public List<MarsDailyWeather> removeRecords(){
+        List<MarsDailyWeather> recordsToRemove = marsRepo.findFirst7ByOrderBySolDesc();
+        log.info("Ilość rekordów do skasowania {}, Liczba rekordów w bazie przed skasowanie {}", recordsToRemove.size(), marsRepo.count());
+        marsRepo.deleteAll(recordsToRemove);
+        log.info("Liczba rekordów w bazie, po skasowaniu {}", marsRepo.count());
+        return recordsToRemove;
+    }
 }
