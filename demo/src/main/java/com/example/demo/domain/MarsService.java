@@ -96,7 +96,7 @@ public class MarsService {
     }
 
     private void saveSyncInfo() {
-        syncRepo.save(new DataSyncInfo(LocalDateTime.now().minusDays(10)));
+        syncRepo.save(new DataSyncInfo(LocalDateTime.now()));
         log.info("Synchronizacja danych zakończona o {}", LocalDateTime.now());
     }
 
