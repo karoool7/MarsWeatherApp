@@ -16,6 +16,11 @@ public class MarsController {
 
     private final MarsService marsService;
 
+    @GetMapping("/get7days")
+    List<SolDataDto> getWeatherForLast7Days(){
+        return marsService.aggregateWeatherForLast7Days();
+    }
+
     @DeleteMapping("/delete")
     List<MarsDailyWeather> removeRecords(){
         return marsService.removeRecords();
