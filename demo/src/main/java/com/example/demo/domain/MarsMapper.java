@@ -13,7 +13,7 @@ public class MarsMapper {
         return new MarsDailyWeather(
                 null, // id generowane automatycznie przez bazę danych
                 record.terrestrialDate(),
-                record.sol(),
+                convertStringToInteger(record.sol()),
                 record.ls(),
                 record.season(),
                 record.minTemp(),
@@ -29,26 +29,10 @@ public class MarsMapper {
         );
     }
 
-    private MarsWeatherDetailsDto toDtoFromEntity(MarsDailyWeather entity){
-        return new MarsWeatherDetailsDto(
-                entity.getTerrestrialDate(),
-                entity.getSol(),
-                entity.getLs(),
-                entity.getSeason(),
-                entity.getMinTemp(),
-                entity.getMaxTemp(),
-                entity.getPressure(),
-                entity.getPressureString(),
-                entity.getAtmoOpacity(),
-                entity.getSunrise(),
-                entity.getSunset(),
-                entity.getLocalUvIrradianceIndex(),
-                entity.getMinGtsTemp(),
-                entity.getMaxGtsTemp()
-        );
-    }
-
-    List<MarsWeatherDetailsDto> toDtoListFromEntity(List<MarsDailyWeather> entities){
-        return entities.stream().map(this::toDtoFromEntity).toList();
+    private Integer convertStringToInteger(String solString){
+        if (solString != null && solString.matches("-?\\d+")){
+            return Integer.parseInt(solString);
+        }
+        throw new IllegalArgumentException("Invalid sol value: " + solString);
     }
 }

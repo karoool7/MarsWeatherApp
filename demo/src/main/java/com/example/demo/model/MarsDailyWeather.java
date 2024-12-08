@@ -20,7 +20,7 @@ public class MarsDailyWeather {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String terrestrialDate;
-    private String sol;
+    private Integer sol;
     private String ls;
     private String season;
     private String minTemp;

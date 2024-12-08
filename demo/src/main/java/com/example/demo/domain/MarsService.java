@@ -28,12 +28,6 @@ public class MarsService {
 
     private static final int OUTDATED_AFTER_DAYS = 7;
 
-    public List<MarsWeatherDetailsDto> getWeather() {
-        initData();
-        log.info("Lista obiektów w bazie danych: {}", marsRepo.count());
-        return marsMapper.toDtoListFromEntity(marsRepo.findAll());
-    }
-
     private Optional<List<MarsWeatherDetailsDto>> getValidSolesIfPresent(MarsWeatherDto marsWeatherDto) {
         return Optional.ofNullable(marsWeatherDto)
                 .map(MarsWeatherDto::soles)

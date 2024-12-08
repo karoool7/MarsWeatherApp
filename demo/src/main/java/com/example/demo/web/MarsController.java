@@ -16,11 +16,6 @@ public class MarsController {
 
     private final MarsService marsService;
 
-    @GetMapping("/getWeather")
-    List<MarsWeatherDetailsDto> getWeather(){
-        return marsService.getWeather();
-    }
-
     @DeleteMapping("/delete")
     List<MarsDailyWeather> removeRecords(){
         return marsService.removeRecords();
