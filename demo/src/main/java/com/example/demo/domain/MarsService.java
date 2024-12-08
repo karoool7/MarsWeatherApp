@@ -4,15 +4,16 @@ import com.example.demo.model.DataSyncInfo;
 import com.example.demo.model.MarsDailyWeather;
 import com.example.demo.repo.DataSyncInfoRepo;
 import com.example.demo.repo.MarsRepo;
-import com.example.demo.web.MarsWeatherDetailsDto;
-import com.example.demo.web.MarsWeatherDto;
-import com.example.demo.web.NasaClient;
+import com.example.demo.web.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,5 +124,29 @@ public class MarsService {
 
     public void synchronizeData(){
         synchronizeMarsWeatherData();
+    }
+
+    public List<SolDataDto> aggregateWeatherForLast7Days(){
+        List<MarsDailyWeather> last7Days = marsRepo.findFirst7ByOrderBySolDesc();
+        List<SolDataDto> solDataDto = new ArrayList<>();
+        last7Days.forEach(sol -> {
+            List<Characteristics> characteristics = new ArrayList<>();
+            characteristics.add(new Characteristics("MaxTemp", sol.getMaxTemp()));
+            characteristics.add(new Characteristics("MinTemp", sol.getMinTemp()));
+            characteristics.add(new Characteristics("Date", sol.getTerrestrialDate()));
+            characteristics.add(new Characteristics("DayName", getDayOfWeek(sol.getTerrestrialDate())));
+            solDataDto.add(buildSolDataDto(sol, characteristics));
+        });
+        return solDataDto;
+    }
+
+    private String getDayOfWeek(String dateStr){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate date = LocalDate.parse(dateStr, formatter);
+        return date.getDayOfWeek().toString();
+    }
+
+    private static SolDataDto buildSolDataDto(MarsDailyWeather sol, List<Characteristics> characteristics) {
+        return new SolDataDto(sol.getSol(), characteristics);
     }
 }
