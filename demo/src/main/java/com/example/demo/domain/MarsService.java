@@ -149,4 +149,46 @@ public class MarsService {
     private static SolDataDto buildSolDataDto(MarsDailyWeather sol, List<Characteristics> characteristics) {
         return new SolDataDto(sol.getSol(), characteristics);
     }
+
+    public SolDataDto getWeatherDetailsForSol(int solNum){
+        if (solNum < 0) {
+            throw new IllegalArgumentException("Invalid sol number, must be a non-negative value");
+        }
+        Optional<MarsDailyWeather> solEntity = marsRepo.findBySol(solNum);
+        return solEntity.map(sol -> {
+            List<Characteristics> characteristics = new ArrayList<>();
+            characteristics.add(new Characteristics("Date", sol.getTerrestrialDate()));
+            characteristics.add(new Characteristics("DayName", getDayOfWeek(sol.getTerrestrialDate())));
+            characteristics.add(new Characteristics("MaxTemp", sol.getMaxTemp()));
+            characteristics.add(new Characteristics("MinTemp", sol.getMinTemp()));
+            characteristics.add(new Characteristics("MaxGtsTemp", sol.getMaxGtsTemp()));
+            characteristics.add(new Characteristics("MinGtsTemp", sol.getMinGtsTemp()));
+            characteristics.add(new Characteristics("Pressure", sol.getPressure()));
+            characteristics.add(new Characteristics("UV", sol.getLocalUvIrradianceIndex()));
+            characteristics.add(new Characteristics("Opacity", sol.getAtmoOpacity()));
+            characteristics.add(new Characteristics("Sunrise", sol.getSunrise()));
+            characteristics.add(new Characteristics("Sunset", sol.getSunset()));
+            characteristics.add(new Characteristics("Month", sol.getSeason().replace("Month ", "")));
+            characteristics.add(new Characteristics("Season", getMartianSeason(sol.getLs())));
+            return buildSolDataDto(sol,characteristics);
+        }).orElseThrow(() -> new IllegalArgumentException("Sol data not found for given sol number"));
+    }
+
+    String getMartianSeason(String ls){
+        if (ls.matches("\\d+")){
+            int lsNum = Integer.parseInt(ls);
+            if (lsNum >= 0 && lsNum < 90){
+                return "Wiosna";
+            } else if (lsNum >= 90 && lsNum < 180) {
+                return "Lato";
+            } else if (lsNum >= 180 && lsNum < 270) {
+                return "Jesień";
+            } else if (lsNum >= 270 && lsNum <= 360) {
+                return "Zima";
+            } else {
+                throw new IllegalArgumentException("Invalid ls value: " + lsNum);
+            }
+        }
+        throw new IllegalArgumentException("Invalid ls " + ls);
+    }
 }
