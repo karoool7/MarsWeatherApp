@@ -1,5 +1,6 @@
 package com.example.demo.domain;
 
+import com.example.demo.exception.NoDataFoundException;
 import com.example.demo.model.DataSyncInfo;
 import com.example.demo.model.MarsDailyWeather;
 import com.example.demo.repo.DataSyncInfoRepo;
@@ -42,7 +43,7 @@ public class MarsService {
         for (Field field: obj.getClass().getDeclaredFields()){
             field.setAccessible(true);
             try {
-                if (field.get(obj) == null){
+                if (field.get(obj) == null || field.get(obj).equals("--")){
                     return false;
                 }
             } catch (IllegalAccessException e) {
@@ -190,5 +191,11 @@ public class MarsService {
             }
         }
         throw new IllegalArgumentException("Invalid ls " + ls);
+    }
+
+    public List<SolDataDto> getWeatherFor20Days(){
+        List<MarsDailyWeather> soles = marsRepo.findAllByOrderBySolDesc();
+        if (soles.isEmpty()) throw new NoDataFoundException("No weather data available");
+        return null;
     }
 }
