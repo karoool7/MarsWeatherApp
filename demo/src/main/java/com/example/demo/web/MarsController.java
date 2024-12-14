@@ -18,6 +18,11 @@ public class MarsController {
         return marsService.aggregateWeatherForLast7Days();
     }
 
+    @GetMapping("/get20days")
+    List<SolDataDto> getWeatherForNext20Days(){
+        return marsService.getWeatherFor20Days();
+    }
+
     @GetMapping("/weather/details")
     SolDataDto getWeatherDetailsBySol(@RequestParam int sol){
         return marsService.getWeatherDetailsForSol(sol);

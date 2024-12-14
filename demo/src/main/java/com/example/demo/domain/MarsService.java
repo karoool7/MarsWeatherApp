@@ -14,9 +14,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -29,6 +27,7 @@ public class MarsService {
     private final DataSyncInfoRepo syncRepo;
 
     private static final int OUTDATED_AFTER_DAYS = 7;
+    private static int FORECAST_DAYS_FORWARD = 20;
 
     private Optional<List<MarsWeatherDetailsDto>> getValidSolesIfPresent(MarsWeatherDto marsWeatherDto) {
         return Optional.ofNullable(marsWeatherDto)
@@ -196,6 +195,22 @@ public class MarsService {
     public List<SolDataDto> getWeatherFor20Days(){
         List<MarsDailyWeather> soles = marsRepo.findAllByOrderBySolDesc();
         if (soles.isEmpty()) throw new NoDataFoundException("No weather data available");
+        int lastSol = soles.stream().findFirst().get().getSol();
+        int remainingSoles = lastSol - 687 + FORECAST_DAYS_FORWARD;
+        Map<Integer,Integer> maxTempMap = new HashMap<>();
+        while (remainingSoles > 0){
+            for (var sol : soles) {
+                if (sol.getSol() <= remainingSoles){
+                    maxTempMap.put(FORECAST_DAYS_FORWARD, Integer.parseInt(sol.getMaxTemp()));
+                    FORECAST_DAYS_FORWARD--;
+                    if (FORECAST_DAYS_FORWARD == 0){
+                        FORECAST_DAYS_FORWARD = 20;
+                        break;
+                    }
+                }
+            }
+            remainingSoles -= 687;
+        }
         return null;
     }
 }
