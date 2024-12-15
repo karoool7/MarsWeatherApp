@@ -27,6 +27,7 @@ public class MarsService {
     private final DataSyncInfoRepo syncRepo;
 
     private static final int OUTDATED_AFTER_DAYS = 7;
+    private static final int MARTIAN_YEAR_IN_DAYS = 687;
     private static int FORECAST_DAYS_FORWARD = 20;
 
     private Optional<List<MarsWeatherDetailsDto>> getValidSolesIfPresent(MarsWeatherDto marsWeatherDto) {
@@ -196,12 +197,20 @@ public class MarsService {
         List<MarsDailyWeather> soles = marsRepo.findAllByOrderBySolDesc();
         if (soles.isEmpty()) throw new NoDataFoundException("No weather data available");
         int lastSol = soles.stream().findFirst().get().getSol();
-        int remainingSoles = lastSol - 687 + FORECAST_DAYS_FORWARD;
+        int remainingSoles = lastSol - MARTIAN_YEAR_IN_DAYS + FORECAST_DAYS_FORWARD;
         Map<Integer,Integer> maxTempMap = new HashMap<>();
+        Map<Integer,Integer> minTempMap = new HashMap<>();
         while (remainingSoles > 0){
             for (var sol : soles) {
                 if (sol.getSol() <= remainingSoles){
-                    maxTempMap.put(FORECAST_DAYS_FORWARD, Integer.parseInt(sol.getMaxTemp()));
+                    int currentMaxTemp = maxTempMap.getOrDefault(FORECAST_DAYS_FORWARD,0);
+                    currentMaxTemp += Integer.parseInt(sol.getMaxTemp());
+                    maxTempMap.put(FORECAST_DAYS_FORWARD, currentMaxTemp);
+
+                    int currentMinTemp = minTempMap.getOrDefault(FORECAST_DAYS_FORWARD, 0);
+                    currentMinTemp += Integer.parseInt(sol.getMinTemp());
+                    minTempMap.put(FORECAST_DAYS_FORWARD, currentMinTemp);
+
                     FORECAST_DAYS_FORWARD--;
                     if (FORECAST_DAYS_FORWARD == 0){
                         FORECAST_DAYS_FORWARD = 20;
@@ -209,7 +218,7 @@ public class MarsService {
                     }
                 }
             }
-            remainingSoles -= 687;
+            remainingSoles -= MARTIAN_YEAR_IN_DAYS;
         }
         return null;
     }
