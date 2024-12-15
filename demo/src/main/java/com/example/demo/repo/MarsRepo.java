@@ -11,4 +11,6 @@ public interface MarsRepo extends JpaRepository<MarsDailyWeather, Long> {
     List<MarsDailyWeather> findFirst7ByOrderBySolDesc();
 
     Optional<MarsDailyWeather> findBySol(int sol);
+
+    List<MarsDailyWeather> findAllByOrderBySolDesc();
 }
