@@ -198,6 +198,7 @@ public class MarsService {
         if (soles.isEmpty()) throw new NoDataFoundException("No weather data available");
         int lastSol = soles.stream().findFirst().get().getSol();
         int remainingSoles = lastSol - MARTIAN_YEAR_IN_DAYS + FORECAST_DAYS_FORWARD;
+        int totalMartianYears = lastSol / MARTIAN_YEAR_IN_DAYS;
         Map<Integer,Integer> maxTempMap = new HashMap<>();
         Map<Integer,Integer> minTempMap = new HashMap<>();
         while (remainingSoles > 0){
@@ -220,6 +221,9 @@ public class MarsService {
             }
             remainingSoles -= MARTIAN_YEAR_IN_DAYS;
         }
+
+        maxTempMap.replaceAll((key, value) -> value / totalMartianYears);
+        minTempMap.replaceAll((key, value) -> value / totalMartianYears);
         return null;
     }
 }
