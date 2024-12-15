@@ -136,7 +136,7 @@ public class MarsService {
             characteristics.add(new Characteristics("MinTemp", sol.getMinTemp()));
             characteristics.add(new Characteristics("Date", sol.getTerrestrialDate()));
             characteristics.add(new Characteristics("DayName", getDayOfWeek(sol.getTerrestrialDate())));
-            solDataDto.add(buildSolDataDto(sol, characteristics));
+            solDataDto.add(buildSolDataDto(sol.getSol(), characteristics));
         });
         return solDataDto;
     }
@@ -147,8 +147,8 @@ public class MarsService {
         return date.getDayOfWeek().toString();
     }
 
-    private static SolDataDto buildSolDataDto(MarsDailyWeather sol, List<Characteristics> characteristics) {
-        return new SolDataDto(sol.getSol(), characteristics);
+    private static SolDataDto buildSolDataDto(int sol, List<Characteristics> characteristics) {
+        return new SolDataDto(sol, characteristics);
     }
 
     public SolDataDto getWeatherDetailsForSol(int solNum){
@@ -171,7 +171,7 @@ public class MarsService {
             characteristics.add(new Characteristics("Sunset", sol.getSunset()));
             characteristics.add(new Characteristics("Month", sol.getSeason().replace("Month ", "")));
             characteristics.add(new Characteristics("Season", getMartianSeason(sol.getLs())));
-            return buildSolDataDto(sol,characteristics);
+            return buildSolDataDto(sol.getSol(),characteristics);
         }).orElseThrow(() -> new IllegalArgumentException("Sol data not found for given sol number"));
     }
 
@@ -201,6 +201,7 @@ public class MarsService {
         int totalMartianYears = lastSol / MARTIAN_YEAR_IN_DAYS;
         Map<Integer,Integer> maxTempMap = new HashMap<>();
         Map<Integer,Integer> minTempMap = new HashMap<>();
+        List<SolDataDto> solDataDtos = new ArrayList<>();
         while (remainingSoles > 0){
             for (var sol : soles) {
                 if (sol.getSol() <= remainingSoles){
@@ -224,6 +225,16 @@ public class MarsService {
 
         maxTempMap.replaceAll((key, value) -> value / totalMartianYears);
         minTempMap.replaceAll((key, value) -> value / totalMartianYears);
-        return null;
+
+        while (FORECAST_DAYS_FORWARD > 0){
+            List<Characteristics> characteristics = new ArrayList<>();
+            characteristics.add(new Characteristics("MaxTempAvg",
+                    String.valueOf(maxTempMap.get(FORECAST_DAYS_FORWARD))));
+            characteristics.add(new Characteristics("MinTempAvg",
+                    String.valueOf(minTempMap.get(FORECAST_DAYS_FORWARD))));
+            solDataDtos.add(buildSolDataDto(FORECAST_DAYS_FORWARD, characteristics));
+            FORECAST_DAYS_FORWARD--;
+        }
+        return solDataDtos;
     }
 }
