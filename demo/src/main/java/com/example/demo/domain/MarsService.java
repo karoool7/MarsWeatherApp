@@ -71,7 +71,7 @@ public class MarsService {
         return marsRepo.count() > 0;
     }
 
-    private boolean isDataOutdated() {
+    boolean isDataOutdated() {
         Optional<DataSyncInfo> lastUpdate = syncRepo.findFirstByOrderByLastUpdateDesc();
         return lastUpdate.isPresent() && lastUpdate.get().getLastUpdate().isBefore(LocalDateTime.now().minusDays(OUTDATED_AFTER_DAYS));
     }
