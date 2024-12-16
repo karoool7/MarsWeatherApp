@@ -28,7 +28,7 @@ public class MarsService {
 
     private static final int OUTDATED_AFTER_DAYS = 7;
     private static final int MARTIAN_YEAR_IN_DAYS = 687;
-    private static int FORECAST_DAYS_FORWARD = 20;
+    private static int forecastDaysForward;
 
     private Optional<List<MarsWeatherDetailsDto>> getValidSolesIfPresent(MarsWeatherDto marsWeatherDto) {
         return Optional.ofNullable(marsWeatherDto)
@@ -201,7 +201,8 @@ public class MarsService {
     private static List<SolDataDto> aggregateTempsForYears(List<MarsDailyWeather> soles) {
         if (soles.isEmpty()) throw new NoDataFoundException("No weather data available");
         int lastSol = soles.stream().findFirst().get().getSol();
-        int remainingSoles = lastSol - MARTIAN_YEAR_IN_DAYS + FORECAST_DAYS_FORWARD;
+        setDefaultForecastDays();
+        int remainingSoles = lastSol - MARTIAN_YEAR_IN_DAYS + forecastDaysForward;
         int totalMartianYears = lastSol / MARTIAN_YEAR_IN_DAYS;
         Map<Integer,Integer> maxTempMap = new HashMap<>(); 
         Map<Integer,Integer> minTempMap = new HashMap<>();
@@ -220,6 +221,10 @@ public class MarsService {
         return buildCharacteristicsForNext20Days(maxTempMap, minTempMap, solDataDtos);
     }
 
+    private static void setDefaultForecastDays() {
+        forecastDaysForward = 20;
+    }
+
     private static boolean hasSolesToProcess(int remainingSoles) {
         return remainingSoles > 0;
     }
@@ -229,22 +234,22 @@ public class MarsService {
     }
 
     private static void aggregateTemps(MarsDailyWeather sol, Map<Integer, Integer> maxTempMap, Map<Integer, Integer> minTempMap) {
-        int currentMaxTemp = maxTempMap.getOrDefault(FORECAST_DAYS_FORWARD,0);
+        int currentMaxTemp = maxTempMap.getOrDefault(forecastDaysForward,0);
         currentMaxTemp += Integer.parseInt(sol.getMaxTemp());
-        maxTempMap.put(FORECAST_DAYS_FORWARD, currentMaxTemp);
+        maxTempMap.put(forecastDaysForward, currentMaxTemp);
 
-        int currentMinTemp = minTempMap.getOrDefault(FORECAST_DAYS_FORWARD, 0);
+        int currentMinTemp = minTempMap.getOrDefault(forecastDaysForward, 0);
         currentMinTemp += Integer.parseInt(sol.getMinTemp());
-        minTempMap.put(FORECAST_DAYS_FORWARD, currentMinTemp);
+        minTempMap.put(forecastDaysForward, currentMinTemp);
     }
 
     private static void stepBackOneDay() {
-        FORECAST_DAYS_FORWARD--;
+        forecastDaysForward--;
     }
 
     private static boolean shouldMoveBackOneYear() {
-        if (FORECAST_DAYS_FORWARD == 0){
-            FORECAST_DAYS_FORWARD = 20;
+        if (forecastDaysForward == 0){
+            setDefaultForecastDays();
             return true;
         }
         return false;
@@ -261,13 +266,13 @@ public class MarsService {
     }
 
     private static List<SolDataDto> buildCharacteristicsForNext20Days(Map<Integer, Integer> maxTempMap, Map<Integer, Integer> minTempMap, List<SolDataDto> solDataDtos) {
-        while (FORECAST_DAYS_FORWARD > 0){
+        while (forecastDaysForward > 0){
             List<Characteristics> characteristics = new ArrayList<>();
             characteristics.add(new Characteristics("MaxTempAvg",
-                    String.valueOf(maxTempMap.get(FORECAST_DAYS_FORWARD))));
+                    String.valueOf(maxTempMap.get(forecastDaysForward))));
             characteristics.add(new Characteristics("MinTempAvg",
-                    String.valueOf(minTempMap.get(FORECAST_DAYS_FORWARD))));
-            solDataDtos.add(buildSolDataDto(FORECAST_DAYS_FORWARD, characteristics));
+                    String.valueOf(minTempMap.get(forecastDaysForward))));
+            solDataDtos.add(buildSolDataDto(forecastDaysForward, characteristics));
             stepBackOneDay();
         }
         return solDataDtos;
