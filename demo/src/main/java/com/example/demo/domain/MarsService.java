@@ -39,7 +39,7 @@ public class MarsService {
                 .filter(soles -> !soles.isEmpty());
     }
 
-    private boolean hasNoNullFields(Object obj) {
+    boolean hasNoNullFields(Object obj) {
         for (Field field: obj.getClass().getDeclaredFields()){
             field.setAccessible(true);
             try {
