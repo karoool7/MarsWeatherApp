@@ -198,7 +198,7 @@ public class MarsService {
         return aggregateTempsForYears(soles);
     }
 
-    private static List<SolDataDto> aggregateTempsForYears(List<MarsDailyWeather> soles) {
+    private List<SolDataDto> aggregateTempsForYears(List<MarsDailyWeather> soles) {
         if (soles.isEmpty()) throw new NoDataFoundException("No weather data available");
         int lastSol = soles.stream().findFirst().get().getSol();
         setDefaultForecastDays();
@@ -260,7 +260,7 @@ public class MarsService {
         return remainingSoles;
     }
 
-    private static void calculateAvgTempsForDays(Map<Integer, Integer> maxTempMap, int totalMartianYears, Map<Integer, Integer> minTempMap) {
+    void calculateAvgTempsForDays(Map<Integer, Integer> maxTempMap, int totalMartianYears, Map<Integer, Integer> minTempMap) {
         maxTempMap.replaceAll((key, value) -> value / totalMartianYears);
         minTempMap.replaceAll((key, value) -> value / totalMartianYears);
     }
