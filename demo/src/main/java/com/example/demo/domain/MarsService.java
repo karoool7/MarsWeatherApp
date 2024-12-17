@@ -39,7 +39,7 @@ public class MarsService {
                 .filter(soles -> !soles.isEmpty());
     }
 
-    private boolean hasNoNullFields(Object obj) {
+    boolean hasNoNullFields(Object obj) {
         for (Field field: obj.getClass().getDeclaredFields()){
             field.setAccessible(true);
             try {
@@ -71,7 +71,7 @@ public class MarsService {
         return marsRepo.count() > 0;
     }
 
-    private boolean isDataOutdated() {
+    boolean isDataOutdated() {
         Optional<DataSyncInfo> lastUpdate = syncRepo.findFirstByOrderByLastUpdateDesc();
         return lastUpdate.isPresent() && lastUpdate.get().getLastUpdate().isBefore(LocalDateTime.now().minusDays(OUTDATED_AFTER_DAYS));
     }
@@ -198,7 +198,7 @@ public class MarsService {
         return aggregateTempsForYears(soles);
     }
 
-    private static List<SolDataDto> aggregateTempsForYears(List<MarsDailyWeather> soles) {
+    private List<SolDataDto> aggregateTempsForYears(List<MarsDailyWeather> soles) {
         if (soles.isEmpty()) throw new NoDataFoundException("No weather data available");
         int lastSol = soles.stream().findFirst().get().getSol();
         setDefaultForecastDays();
@@ -260,7 +260,7 @@ public class MarsService {
         return remainingSoles;
     }
 
-    private static void calculateAvgTempsForDays(Map<Integer, Integer> maxTempMap, int totalMartianYears, Map<Integer, Integer> minTempMap) {
+    void calculateAvgTempsForDays(Map<Integer, Integer> maxTempMap, int totalMartianYears, Map<Integer, Integer> minTempMap) {
         maxTempMap.replaceAll((key, value) -> value / totalMartianYears);
         minTempMap.replaceAll((key, value) -> value / totalMartianYears);
     }
