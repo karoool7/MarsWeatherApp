@@ -8,3 +8,6 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
+
+nasa-client:
+  url: https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json
