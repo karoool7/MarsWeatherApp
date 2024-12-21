@@ -105,7 +105,7 @@ public class MarsService {
         return entities != null && !entities.contains(solToCheck);
     }
 
-    private MarsWeatherDto fetchMarsWeatherFromNasa() {
+    MarsWeatherDto fetchMarsWeatherFromNasa() {
         try {
             return nasaClient.getWeather();
         } catch (Exception e) {
