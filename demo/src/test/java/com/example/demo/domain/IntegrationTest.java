@@ -5,6 +5,7 @@ import com.example.demo.model.MarsDailyWeather;
 import com.example.demo.repo.MarsRepo;
 import com.example.demo.web.MarsWeatherDetailsDto;
 import com.example.demo.web.MarsWeatherDto;
+import com.example.demo.web.SolDataDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -14,14 +15,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
@@ -30,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Slf4j
 @ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(TestInitDatabase.class)
 public class IntegrationTest {
 
@@ -38,6 +40,8 @@ public class IntegrationTest {
     private MarsRepo marsRepo;
     @Autowired
     private MarsService marsService;
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     @RegisterExtension
     static WireMockExtension wireMock =
@@ -104,5 +108,29 @@ public class IntegrationTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String weatherDtoAsJson = objectMapper.writeValueAsString(weatherDto);
         return weatherDtoAsJson;
+    }
+
+    @Test
+    void shouldReturn7Soles(){
+        //when
+        List<SolDataDto> response = restTemplate.exchange(
+                "/get7days",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<SolDataDto>>() {
+                }
+        ).getBody();
+        //then
+        assertThat(response.size()).isEqualTo(7);
+    }
+
+    @Test
+    void shouldReturnSolesOrderedBySolDesc(){
+        //when
+        List<MarsDailyWeather> response = marsRepo.findAllByOrderBySolDesc();
+        //then
+        assertThat(response)
+                .extracting(MarsDailyWeather::getSol)
+                .isSortedAccordingTo(Comparator.reverseOrder());
     }
 }
