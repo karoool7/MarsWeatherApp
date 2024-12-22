@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<ul>
+  <li th:each="sol : ${soles}">
+    <h2>Sol: <span th:text="${sol.sol}"></span></h2>
+    <ul>
+      <li th:each="char : ${sol.characteristics}">
+        <span th:text="${char.name}"></span>
+        <span th:text="${char.value}"></span>
+      </li>
+    </ul>
+  </li>
+</ul>
+</body>
+</html>

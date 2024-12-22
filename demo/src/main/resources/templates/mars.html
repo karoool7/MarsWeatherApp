@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pogoda na Marsie</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="icon" type="image/jpeg" th:href="@{/static/img/planetamarstlo.jpeg}">
+  <script th:src="@{/js/script.js}"></script>
+</head>
+
+<body>
+  <div class="weather-app">
+    <div class="weather-header">
+      <h1>Marsjańska Pogoda</h1>
+    </div>
+    <div class="weather-info">
+      <div class="location">lokalizacja</div>
+      <div class="current-weather">
+        <div class="temperature">Gale Crater</div>
+        <div class="weather-sol">Przeważnie słonecznie</div>
+      </div>
+    </div>
+    <div class="forecast">
+    </div>
+    <button id="futureWeatherPhone" onclick="redirectTo20DaysWeather()">Prognoza na 20 dni</button>
+  </div>
+  <div class="information-app">
+    <div class="weather-header">
+            <button id="futureWeatherPC" style="position: absolute; left: 20px; top: 20px;" onclick="redirectTo20DaysWeather()">Prognoza na 20 dni</button>
+      <h1>Szczegółowe informacje</h1>
+      <div class="details-container">
+        <div class="details-upper">
+          <div class="details-day" onclick="intoSelectWeahterDay()">Wybierz dzień</div>
+          <div class="details-sol"></div>
+        </div>
+        <div class="line"></div>
+        <div class="details-middle">
+          <div class="day-temp-details" style="margin-top: 20px;"></div>
+          <div class="ground-temp" style="margin-top: 20px;"></div>
+          <div class="pressure" style="margin-top: 20px;"></div>
+          <div class="uv" style="margin-top: 20px;"></div>
+          <div class="opacity" style="margin-top: 20px;"></div>
+          <div class="sunrise" style="margin-top: 20px;"></div>
+          <div class="sunset" style="margin-top: 20px;"></div>
+          <div class="month" style="margin-top: 20px;"></div>
+          <div class="season" style="margin-top: 20px;"></div>
+        </div>
+        <div class="line"></div>
+        <div class="details-bottom">
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
