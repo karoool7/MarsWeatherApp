@@ -20,4 +20,14 @@ public class ViewController {
         model.addAttribute("soles", soles);
         return "index";
     }
+
+    @GetMapping("/mars")
+    String getMarsHome(){
+        return "mars";
+    }
+
+    @GetMapping("/mars20days")
+    String get20DaysWeather(){
+        return "mars20days";
+    }
 }

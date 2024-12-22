@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pl" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pogoda na Marsie</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="icon" type="image/jpeg" th:href="@{/static/img/planetamarstlo.jpeg}">
+    <script th:src="@{/js/mars20Days.js}"></script>
+</head>
+
+<body>
+    <div class="weather-app-20">
+        <div class="weather-header">
+            <h1>Marsjańska Pogoda</h1>
+        </div>
+        <div class="weather-info">
+            <div class="location">lokalizacja</div>
+            <div class="current-weather">
+                <div class="temperature">Gale Crater</div>
+                <div class="weather-sol">Przeważnie słonecznie</div>
+            </div>
+        </div>
+        <button class="backTo7DaysWeather" onclick="redirectToHome()">Wróć do pogody 7 dniowej</button>
+    </div>
+    <div class="information-app-20">
+        <div class="weather-header">
+            <h1>Prognoza pogody dla Marsa na 20 dni</h1>
+            <div class="middle-20-days">
+                <div class="first-floor"></div>
+                <div class="second-floor"></div>
+                <div class="third-floor"></div>
+                <div class="fourth-floor"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
